@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-architecture-overview" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.7.0">
+<title data-rh="true">Architecture Overview | Fast Inverted Index</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://your-docusaurus-site.example.com/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://your-docusaurus-site.example.com/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.example.com/docs/architecture-overview"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Architecture Overview | Fast Inverted Index"><meta data-rh="true" name="description" content="Version 0.4.6"><meta data-rh="true" property="og:description" content="Version 0.4.6"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.example.com/docs/architecture-overview"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.example.com/docs/architecture-overview" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.example.com/docs/architecture-overview" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/blog/rss.xml" title="Fast Inverted Index RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="Fast Inverted Index Atom Feed"><link rel="stylesheet" href="/assets/css/styles.1724a0b2.css">
+<script src="/assets/js/runtime~main.1739aa7e.js" defer="defer"></script>
+<script src="/assets/js/main.6ea55542.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"><div class="navbar__logo"><img src="/img/logo.svg" alt="Fast Inverted Index Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/img/logo.svg" alt="Fast Inverted Index Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Fast Inverted Index</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/docs/">Documentation</a><a class="navbar__item navbar__link" href="/blog">Blog</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/username/fast-inverted-index" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/introduction">Getting Started</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/api">Core Concepts</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/docs/architecture">Architecture</a></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/architecture">architecture</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/docs/architecture-overview">Architecture Overview</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/hybrid-dictionary">Hybrid Dictionary</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/memory-management">Memory Management</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/thread-safety">Thread Safety</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/document-content-storage">Document Content Storage</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/parallel-indexing">Parallel Indexing</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/text-field-search">Text Field Search</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/configuration">Configuration</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/ltr">Search Features</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/python-type-conversion">Integration</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/observability">Operations</a></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Architecture</span><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Architecture Overview</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Fast Inverted Index: Architectural Overview</h1></header>
+<p><em>Version 0.4.6</em></p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="introduction">Introduction<a href="#introduction" class="hash-link" aria-label="Direct link to Introduction" title="Direct link to Introduction">​</a></h2>
+<p>This document provides a comprehensive architectural overview of the Fast Inverted Index library, including its system design, implementation details, performance characteristics, and engineering decisions. It is intended for developers, architects, and system designers who want to understand how the library works internally, as well as those evaluating it for production use.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="system-architecture">System Architecture<a href="#system-architecture" class="hash-link" aria-label="Direct link to System Architecture" title="Direct link to System Architecture">​</a></h2>
+<p>Fast Inverted Index follows a layered architecture with clean separation of concerns between components. The system is designed to be:</p>
+<ol>
+<li><strong>Modular</strong>: Components can be replaced or extended independently</li>
+<li><strong>Efficient</strong>: Optimized for both search performance and memory usage</li>
+<li><strong>Thread-safe</strong>: Supporting concurrent operations</li>
+<li><strong>Scalable</strong>: Handling large document collections</li>
+<li><strong>Extensible</strong>: Supporting new ranking algorithms and query types</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="high-level-components">High-Level Components<a href="#high-level-components" class="hash-link" aria-label="Direct link to High-Level Components" title="Direct link to High-Level Components">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                       Public API Layer                        │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┬───────────────┬───────────────┬───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│   Indexing    │    Query      │    Schema     │   Dictionary  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│   Subsystem   │   Engine      │   Management  │   Management  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┴───────────────┴───────────────┴───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                    Core Data Structures                       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┬───────────────┬───────────────┬───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Inverted     │   Skip        │  Compression  │     Cache     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│   Index       │   Lists       │    Engine     │    Manager    │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┴───────────────┴───────────────┼───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│          Memory Management Layer              │  Persistence  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────────────────────────────┴───────────────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                                │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                        ┌───────┴───────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                        │   RocksDB     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                        └───────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="core-components">Core Components<a href="#core-components" class="hash-link" aria-label="Direct link to Core Components" title="Direct link to Core Components">​</a></h3>
+<ol>
+<li>
+<p><strong>Index</strong></p>
+<ul>
+<li>Central component that orchestrates operations</li>
+<li>Manages document addition, deletion, and updates</li>
+<li>Coordinates query execution</li>
+<li>Handles memory management</li>
+</ul>
+</li>
+<li>
+<p><strong>Dictionary</strong></p>
+<ul>
+<li>Maps terms to posting lists</li>
+<li>Implements the hybrid dictionary pattern</li>
+<li>Provides term statistics and suggestions</li>
+</ul>
+</li>
+<li>
+<p><strong>Posting Lists</strong></p>
+<ul>
+<li>Stores document IDs for each term</li>
+<li>Implements skip list optimization for efficient traversal</li>
+<li>Supports compressed storage</li>
+</ul>
+</li>
+<li>
+<p><strong>Query Engine</strong></p>
+<ul>
+<li>Parses and analyzes queries</li>
+<li>Builds execution plans</li>
+<li>Executes queries across posting lists</li>
+<li>Scores and ranks results</li>
+</ul>
+</li>
+<li>
+<p><strong>Schema Management</strong></p>
+<ul>
+<li>Defines field types and their behaviors</li>
+<li>Manages analyzers and tokenization</li>
+<li>Handles field-specific configurations</li>
+<li>Supports serialization and deserialization</li>
+</ul>
+</li>
+<li>
+<p><strong>Storage Layer</strong></p>
+<ul>
+<li>Abstracts persistent storage operations</li>
+<li>Implements RocksDB-based storage</li>
+<li>Handles serialization/deserialization</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="data-structures">Data Structures<a href="#data-structures" class="hash-link" aria-label="Direct link to Data Structures" title="Direct link to Data Structures">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="hybrid-dictionary">Hybrid Dictionary<a href="#hybrid-dictionary" class="hash-link" aria-label="Direct link to Hybrid Dictionary" title="Direct link to Hybrid Dictionary">​</a></h3>
+<p>The hybrid dictionary is a core innovation in Fast Inverted Index. It improves lookup performance by categorizing terms based on their frequency:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                       Hybrid Dictionary                       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────────────┬───────────────────┬───────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│      Hot Terms        │   Medium Terms    │    Cold Terms     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  (High Frequency)     │ (Medium Frequency)│  (Low Frequency)  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                       │                   │                   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  In-memory HashMap    │  Radix Trie       │  Persistent Store │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Lowest latency       │  Space-efficient  │  Storage-efficient│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Access: O(1)         │  Access: O(k)     │  Access: O(log n) │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────┴───────────────────┴───────────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Terms dynamically move between tiers based on their access frequency:</p>
+<ul>
+<li>Hot terms move to cold when rarely accessed (demotion)</li>
+<li>Cold terms move to hot when frequently accessed (promotion)</li>
+<li>Optimizations run periodically to balance the tiers</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="skip-lists">Skip Lists<a href="#skip-lists" class="hash-link" aria-label="Direct link to Skip Lists" title="Direct link to Skip Lists">​</a></h3>
+<p>The library uses skip lists to optimize posting list traversal during query execution:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Level 3:  1 ────────────────────────────────────► 47</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Level 2:  1 ──────────────────► 21 ─────────────► 47</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Level 1:  1 ────────► 11 ─────► 21 ───► 36 ─────► 47</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Base:     1 ─► 5 ─► 11 ─► 16 ─► 21 ─► 27 ─► 36 ─► 47</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Skip list properties:</p>
+<ul>
+<li>Average search time: O(log n)</li>
+<li>Space overhead: O(n)</li>
+<li>Configured with optimal skip distances</li>
+<li>Level count adapts to list length</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="compressed-storage">Compressed Storage<a href="#compressed-storage" class="hash-link" aria-label="Direct link to Compressed Storage" title="Direct link to Compressed Storage">​</a></h3>
+<p>Posting lists are compressed using variable-length integer coding:</p>
+<ul>
+<li>Integers close to zero use fewer bytes</li>
+<li>Delta encoding between consecutive IDs reduces magnitude</li>
+<li>Improves cache efficiency and reduces I/O</li>
+</ul>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Original posting list: [1, 5, 11, 16, 21, 27, 36, 47]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Delta-encoded:         [1, 4, 6,  5,  5,  6,  9,  11]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">VarInt-compressed:     [1, 4, 6,  5,  5,  6,  9,  11]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                        │  │  │   │   │   │   │   └─ 1 byte</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                        └──┴──┴───┴───┴───┴───┴───── 1 byte each</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="query-execution">Query Execution<a href="#query-execution" class="hash-link" aria-label="Direct link to Query Execution" title="Direct link to Query Execution">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="query-processing-flow">Query Processing Flow<a href="#query-processing-flow" class="hash-link" aria-label="Direct link to Query Processing Flow" title="Direct link to Query Processing Flow">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────┐     ┌─────────────┐     ┌─────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Parse      │     │  Plan       │     │  Execute    │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Query      │────►│  Generation │────►│  Query      │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────────────┘     └─────────────┘     └─────────────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                                               │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────┐     ┌─────────────┐     ┌──────▼─────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Format     │     │  Score      │     │  Retrieve  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Results    │◄────│  Results    │◄────│  Postings  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────────────┘     └─────────────┘     └────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<ol>
+<li><strong>Parse Query</strong>: Convert string query to structured representation</li>
+<li><strong>Plan Generation</strong>: Determine optimal execution strategy</li>
+<li><strong>Execute Query</strong>: Traverse posting lists using set operations</li>
+<li><strong>Retrieve Postings</strong>: Fetch document IDs with field info</li>
+<li><strong>Score Results</strong>: Apply ranking algorithm and boost factors</li>
+<li><strong>Format Results</strong>: Prepare for return to client</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="boolean-operations">Boolean Operations<a href="#boolean-operations" class="hash-link" aria-label="Direct link to Boolean Operations" title="Direct link to Boolean Operations">​</a></h3>
+<p>Set operations are implemented with optimized algorithms:</p>
+<ul>
+<li>
+<p><strong>AND</strong>: Intersects multiple posting lists</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">A: [1, 5, 11, 16, 21, 27, 36, 47]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">B: [5, 11, 21, 36, 92]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">A ∩ B = [5, 11, 21, 36]</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>
+<p><strong>OR</strong>: Unions multiple posting lists</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">A: [1, 5, 11, 16, 21, 27, 36, 47]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">B: [5, 11, 21, 36, 92]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">A ∪ B = [1, 5, 11, 16, 21, 27, 36, 47, 92]</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>
+<p><strong>NOT</strong>: Implemented as filtered traversal, not pure set difference</p>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="scoring-algorithms">Scoring Algorithms<a href="#scoring-algorithms" class="hash-link" aria-label="Direct link to Scoring Algorithms" title="Direct link to Scoring Algorithms">​</a></h3>
+<p>The library implements multiple scoring algorithms:</p>
+<ol>
+<li>
+<p><strong>TF-IDF (Term Frequency-Inverse Document Frequency)</strong></p>
+<ul>
+<li>Classic algorithm balancing term frequency and rarity</li>
+<li>Score = tf × idf</li>
+<li>Where:<!-- -->
+<ul>
+<li>tf = term frequency in document</li>
+<li>idf = log(N/df), where N = total docs, df = docs with term</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>BM25 (Best Matching 25)</strong></p>
+<ul>
+<li>Extension of TF-IDF that handles document length</li>
+<li>Score = idf × (tf × (k1 + 1)) / (tf + k1 × (1 - b + b × dl/avgdl))</li>
+<li>Where:<!-- -->
+<ul>
+<li>k1 = term frequency saturation (default: 1.2)</li>
+<li>b = document length normalization (default: 0.75)</li>
+<li>dl = document length, avgdl = average document length</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>BM25L</strong></p>
+<ul>
+<li>Improved BM25 that handles short documents better</li>
+<li>Addresses BM25&#x27;s bias against very short documents</li>
+</ul>
+</li>
+<li>
+<p><strong>Learning to Rank (LTR)</strong></p>
+<ul>
+<li>Combines multiple scoring signals</li>
+<li>Customizable feature weights</li>
+<li>Supports runtime model adjustments</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="memory-management">Memory Management<a href="#memory-management" class="hash-link" aria-label="Direct link to Memory Management" title="Direct link to Memory Management">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="memory-architecture">Memory Architecture<a href="#memory-architecture" class="hash-link" aria-label="Direct link to Memory Architecture" title="Direct link to Memory Architecture">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────┐     ┌───────────────┐     ┌───────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  In-Memory    │     │   Managed     │     │   Persistent  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Structures   │     │   Cache       │     │   Storage     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────┬───────┘     └───────┬───────┘     └───────┬───────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">        │                     │                     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">┌───────▼───────┐     ┌───────▼───────┐     ┌───────▼───────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Dictionary   │     │  LRU Cache    │     │   RocksDB     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Hot Terms  │     │ - TTL-based   │     │  - Terms      │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Med Terms  │     │ - Size-limited│     │  - Postings   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────┘     └───────────────┘     └───────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="memory-optimization-techniques">Memory Optimization Techniques<a href="#memory-optimization-techniques" class="hash-link" aria-label="Direct link to Memory Optimization Techniques" title="Direct link to Memory Optimization Techniques">​</a></h3>
+<ol>
+<li>
+<p><strong>LRU Cache with TTL</strong></p>
+<ul>
+<li>Time-based eviction (default: 300s)</li>
+<li>Size-limited (configurable)</li>
+<li>Prunes stale entries</li>
+</ul>
+</li>
+<li>
+<p><strong>Incremental Memory Cleanup</strong></p>
+<ul>
+<li><code>manage_memory()</code> method for explicit control</li>
+<li>Triggered automatically on thresholds</li>
+<li>Prioritizes high-impact cleanup operations</li>
+</ul>
+</li>
+<li>
+<p><strong>Hot/Medium/Cold Tier Balancing</strong></p>
+<ul>
+<li>Dynamic promotion/demotion based on access patterns</li>
+<li>Periodic optimization (default: every 60s)</li>
+<li>Configurable thresholds</li>
+</ul>
+</li>
+<li>
+<p><strong>Compression</strong></p>
+<ul>
+<li>Variable-length integer encoding</li>
+<li>Delta encoding of posting lists</li>
+<li>Batch compression of related structures</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="search-performance-characteristics">Search Performance Characteristics<a href="#search-performance-characteristics" class="hash-link" aria-label="Direct link to Search Performance Characteristics" title="Direct link to Search Performance Characteristics">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="performance-metrics">Performance Metrics<a href="#performance-metrics" class="hash-link" aria-label="Direct link to Performance Metrics" title="Direct link to Performance Metrics">​</a></h3>
+<table><thead><tr><th>Operation</th><th>Time Complexity</th><th>Space Complexity</th></tr></thead><tbody><tr><td>Term Lookup</td><td>O(1) hot, O(k) medium, O(log n) cold</td><td>O(n)</td></tr><tr><td>Boolean AND</td><td>O(m log(n/m)) where m = smallest list</td><td>O(min(results))</td></tr><tr><td>Boolean OR</td><td>O(n+m) where n,m = list sizes</td><td>O(n+m)</td></tr><tr><td>Document Addition</td><td>O(t) where t = terms in doc</td><td>O(t)</td></tr><tr><td>Index Optimization</td><td>O(n log n) where n = terms</td><td>O(n)</td></tr></tbody></table>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="performance-benchmarks">Performance Benchmarks<a href="#performance-benchmarks" class="hash-link" aria-label="Direct link to Performance Benchmarks" title="Direct link to Performance Benchmarks">​</a></h3>
+<p>Measured on standard hardware (8-core CPU, 16GB RAM, SSD):</p>
+<table><thead><tr><th>Collection Size</th><th>Operation</th><th>Throughput</th><th>Latency p99</th></tr></thead><tbody><tr><td>100K documents</td><td>Term query</td><td>5,200/s</td><td>3.1ms</td></tr><tr><td>100K documents</td><td>2-term AND</td><td>3,800/s</td><td>4.7ms</td></tr><tr><td>100K documents</td><td>3-term OR</td><td>2,900/s</td><td>6.2ms</td></tr><tr><td>1M documents</td><td>Term query</td><td>4,100/s</td><td>4.9ms</td></tr><tr><td>1M documents</td><td>2-term AND</td><td>2,700/s</td><td>8.3ms</td></tr><tr><td>1M documents</td><td>3-term OR</td><td>1,900/s</td><td>12.1ms</td></tr><tr><td>10M documents</td><td>Term query</td><td>2,800/s</td><td>12.6ms</td></tr><tr><td>10M documents</td><td>2-term AND</td><td>1,500/s</td><td>23.4ms</td></tr><tr><td>10M documents</td><td>3-term OR</td><td>920/s</td><td>38.7ms</td></tr></tbody></table>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="thread-safety-implementation">Thread Safety Implementation<a href="#thread-safety-implementation" class="hash-link" aria-label="Direct link to Thread Safety Implementation" title="Direct link to Thread Safety Implementation">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="thread-safe-components">Thread-Safe Components<a href="#thread-safe-components" class="hash-link" aria-label="Direct link to Thread-Safe Components" title="Direct link to Thread-Safe Components">​</a></h3>
+<p>Fast Inverted Index v0.4.6 implements comprehensive thread safety for all operations:</p>
+<ul>
+<li><strong>Index Operations</strong>: Protected with read-write locks</li>
+<li><strong>Cache Access</strong>: Thread-safe with atomic operations</li>
+<li><strong>Query Execution</strong>: Immutable or thread-local state</li>
+<li><strong>Dictionary Access</strong>: Lock-free reads, coordinated writes</li>
+<li><strong>Python Bindings</strong>: GIL-aware thread safety</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="locking-strategy">Locking Strategy<a href="#locking-strategy" class="hash-link" aria-label="Direct link to Locking Strategy" title="Direct link to Locking Strategy">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                      Operation Types                          │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────────────┬───────────────────┬───────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│      Read-Only        │  Read-Mostly      │   Write-Heavy     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  (Search/Query)       │ (Get Document)    │  (Add/Update)     │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                       │                   │                   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Lock-free            │  Shared locks     │  Exclusive locks  │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  High concurrency     │ Medium concurrency│  Serialized       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                       │                   │                   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────┴───────────────────┴───────────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<ol>
+<li>
+<p><strong>Multi-tier Approach</strong></p>
+<ul>
+<li>Fine-grained locks for specific structures</li>
+<li>Coarse-grained locks for complex operations</li>
+<li>Lock-free algorithms where possible</li>
+</ul>
+</li>
+<li>
+<p><strong>Concurrent Readers</strong></p>
+<ul>
+<li>Multiple readers permitted simultaneously</li>
+<li>Read operations don&#x27;t block other readers</li>
+<li>Optimistic concurrency control</li>
+</ul>
+</li>
+<li>
+<p><strong>Arc-RwLock Pattern</strong></p>
+<ul>
+<li>Atomic reference counting for shared ownership</li>
+<li>Read-write locks for mutation control</li>
+<li>Zero-cost abstraction in Rust</li>
+</ul>
+</li>
+<li>
+<p><strong>Python Binding Safety</strong></p>
+<ul>
+<li>Thread-safety preserved across language boundary</li>
+<li>Handle PyO3 GIL considerations</li>
+<li>Safe drop implementation</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="document-storage-architecture">Document Storage Architecture<a href="#document-storage-architecture" class="hash-link" aria-label="Direct link to Document Storage Architecture" title="Direct link to Document Storage Architecture">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="content-storage-patterns">Content Storage Patterns<a href="#content-storage-patterns" class="hash-link" aria-label="Direct link to Content Storage Patterns" title="Direct link to Content Storage Patterns">​</a></h3>
+<p>Fast Inverted Index separates content storage from search functionality, with RocksDB used exclusively for inverted index storage, not document content:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────────────────┐               ┌─────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│     Search Engine       │               │     Content Store       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  (Fast Inverted Index)  │               │  (Redis, MongoDB, etc.) │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────┤               ├─────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Term dictionary      │◄──────────┐   │  - Full document content│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Posting lists        │           │   │  - Rich metadata        │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Document metadata    │           │   │  - Binary attachments   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  - Scoring algorithms   │           │   │  - Version history      │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────────────────────────┘           │   └─────────────────────────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                                      │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                              ┌───────▼───────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                              │ Application Layer │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                              └───────────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="content-retrieval-flow">Content Retrieval Flow<a href="#content-retrieval-flow" class="hash-link" aria-label="Direct link to Content Retrieval Flow" title="Direct link to Content Retrieval Flow">​</a></h3>
+<ol>
+<li>
+<p><strong>Document Indexing</strong></p>
+<ul>
+<li>Parse document into terms</li>
+<li>Store terms in inverted index</li>
+<li>Keep minimal metadata in index</li>
+<li>Store full content in external database</li>
+</ul>
+</li>
+<li>
+<p><strong>Search Processing</strong></p>
+<ul>
+<li>Query matching documents in index</li>
+<li>Retrieve document IDs and scores</li>
+<li>Pass IDs to content store</li>
+<li>Fetch full content by ID</li>
+<li>Return enriched results</li>
+</ul>
+</li>
+<li>
+<p><strong>Recommended Patterns</strong></p>
+<ul>
+<li>Use the same ID across both systems</li>
+<li>Consider batched content retrieval</li>
+<li>Implement appropriate caching</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="field-specific-search">Field-Specific Search<a href="#field-specific-search" class="hash-link" aria-label="Direct link to Field-Specific Search" title="Direct link to Field-Specific Search">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="schema-implementation">Schema Implementation<a href="#schema-implementation" class="hash-link" aria-label="Direct link to Schema Implementation" title="Direct link to Schema Implementation">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                           Schema                              │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┬───────────────┬───────────────┬───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Field Types  │   Analyzers   │  Field Config │  Default Field│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────┴───────────────┴───────────────┴───────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                      Field Definitions                        │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────────────────────────────────────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Field types:</p>
+<ul>
+<li><strong>Text</strong>: Full-text fields with tokenization</li>
+<li><strong>Keyword</strong>: Exact-match fields without tokenization</li>
+<li><strong>Numeric</strong>: Integer or floating-point fields</li>
+<li><strong>Date</strong>: Timestamp or date fields</li>
+<li><strong>Boolean</strong>: True/false fields</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="multi-field-indexing">Multi-Field Indexing<a href="#multi-field-indexing" class="hash-link" aria-label="Direct link to Multi-Field Indexing" title="Direct link to Multi-Field Indexing">​</a></h3>
+<p>The index maintains separate inverted indices per field:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────┐     ┌─────────────┐     ┌─────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Title      │     │  Content    │     │  Tags       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Field Index│     │  Field Index│     │  Field Index│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────┬───────┘     └─────┬───────┘     └─────┬───────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      │                   │                   │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      ▼                   ▼                   ▼</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────┐     ┌─────────────┐     ┌─────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│Term → DocIDs│     │Term → DocIDs│     │Term → DocIDs│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────────────┘     └─────────────┘     └─────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Field-specific operations:</p>
+<ul>
+<li>Each field has its own analyzer configuration</li>
+<li>Terms are indexed with field prefixes</li>
+<li>Queries can target specific fields</li>
+<li>Field-specific boosting is applied during scoring</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="python-bindings-architecture">Python Bindings Architecture<a href="#python-bindings-architecture" class="hash-link" aria-label="Direct link to Python Bindings Architecture" title="Direct link to Python Bindings Architecture">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="pyo3-integration">PyO3 Integration<a href="#pyo3-integration" class="hash-link" aria-label="Direct link to PyO3 Integration" title="Direct link to PyO3 Integration">​</a></h3>
+<p>Fast Inverted Index uses PyO3 for high-performance Python bindings:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                     Python Application                        │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────────────────────────────────────────────┘</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                               │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">                               ▼</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">┌───────────────────────────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                     Python API Layer                          │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────────────────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                    PyO3 Interface Layer                       │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├───────────────────────────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│                      Rust Library Core                        │</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└───────────────────────────────────────────────────────────────┘</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="type-conversion-system">Type Conversion System<a href="#type-conversion-system" class="hash-link" aria-label="Direct link to Type Conversion System" title="Direct link to Type Conversion System">​</a></h3>
+<p>The library implements a robust type conversion system:</p>
+<ul>
+<li>
+<p><strong>Python → Rust Conversion</strong></p>
+<ul>
+<li>Field validation and normalization</li>
+<li>List handling for tag fields</li>
+<li>Type inference and coercion</li>
+<li>Error handling with descriptive messages</li>
+</ul>
+</li>
+<li>
+<p><strong>Rust → Python Conversion</strong></p>
+<ul>
+<li>Metadata conversion to Python dictionaries</li>
+<li>Tag field normalization to lists</li>
+<li>Thread-safe reference handling</li>
+<li>Memory management coordination</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="key-design-decisions-and-tradeoffs">Key Design Decisions and Tradeoffs<a href="#key-design-decisions-and-tradeoffs" class="hash-link" aria-label="Direct link to Key Design Decisions and Tradeoffs" title="Direct link to Key Design Decisions and Tradeoffs">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="1-hybrid-dictionary-vs-pure-implementations">1. Hybrid Dictionary vs. Pure Implementations<a href="#1-hybrid-dictionary-vs-pure-implementations" class="hash-link" aria-label="Direct link to 1. Hybrid Dictionary vs. Pure Implementations" title="Direct link to 1. Hybrid Dictionary vs. Pure Implementations">​</a></h3>
+<p><strong>Decision</strong>: Implement a hybrid approach with three tiers.</p>
+<p><strong>Rationale</strong>:</p>
+<ul>
+<li>Common terms benefit from hashmap performance</li>
+<li>Rare terms benefit from storage efficiency</li>
+<li>Dynamic promotion/demotion adapts to workload</li>
+</ul>
+<p><strong>Tradeoff</strong>:</p>
+<ul>
+<li>Additional complexity in dictionary management</li>
+<li>Overhead of periodic tier re-balancing</li>
+<li>Better overall performance across diverse workloads</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="2-skip-lists-vs-other-posting-list-structures">2. Skip Lists vs. Other Posting List Structures<a href="#2-skip-lists-vs-other-posting-list-structures" class="hash-link" aria-label="Direct link to 2. Skip Lists vs. Other Posting List Structures" title="Direct link to 2. Skip Lists vs. Other Posting List Structures">​</a></h3>
+<p><strong>Decision</strong>: Use skip lists for posting list traversal.</p>
+<p><strong>Rationale</strong>:</p>
+<ul>
+<li>Efficient intersection operations</li>
+<li>Good cache locality</li>
+<li>Simple implementation</li>
+<li>Predictable performance</li>
+</ul>
+<p><strong>Tradeoff</strong>:</p>
+<ul>
+<li>Some space overhead for skip pointers</li>
+<li>Not as space-efficient as bitmap representations for dense sets</li>
+<li>Better query performance for typical workloads</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="3-field-specific-indexing-vs-global-index">3. Field-Specific Indexing vs. Global Index<a href="#3-field-specific-indexing-vs-global-index" class="hash-link" aria-label="Direct link to 3. Field-Specific Indexing vs. Global Index" title="Direct link to 3. Field-Specific Indexing vs. Global Index">​</a></h3>
+<p><strong>Decision</strong>: Maintain separate inverted indices per field.</p>
+<p><strong>Rationale</strong>:</p>
+<ul>
+<li>Enables field-specific querying</li>
+<li>Allows field-specific analyzers</li>
+<li>Supports targeted boosting</li>
+<li>Cleaner query semantics</li>
+</ul>
+<p><strong>Tradeoff</strong>:</p>
+<ul>
+<li>Increased index size</li>
+<li>More complex query planning</li>
+<li>Better search relevance and flexibility</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="4-content-storage-separation">4. Content Storage Separation<a href="#4-content-storage-separation" class="hash-link" aria-label="Direct link to 4. Content Storage Separation" title="Direct link to 4. Content Storage Separation">​</a></h3>
+<p><strong>Decision</strong>: Store only minimal metadata in the index.</p>
+<p><strong>Rationale</strong>:</p>
+<ul>
+<li>Optimizes index for search operations</li>
+<li>Allows specialized content storage</li>
+<li>Reduces index size and memory pressure</li>
+<li>Follows separation of concerns principle</li>
+</ul>
+<p><strong>Tradeoff</strong>:</p>
+<ul>
+<li>Requires separate content storage system</li>
+<li>Additional complexity in application integration</li>
+<li>Better scalability and specialized optimization</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="5-rocksdb-for-persistence">5. RocksDB for Persistence<a href="#5-rocksdb-for-persistence" class="hash-link" aria-label="Direct link to 5. RocksDB for Persistence" title="Direct link to 5. RocksDB for Persistence">​</a></h3>
+<p><strong>Decision</strong>: Use RocksDB for index persistence.</p>
+<p><strong>Rationale</strong>:</p>
+<ul>
+<li>High write throughput (LSM-tree)</li>
+<li>Good read performance</li>
+<li>Embedded database (no separate service)</li>
+<li>Excellent compression</li>
+</ul>
+<p><strong>Tradeoff</strong>:</p>
+<ul>
+<li>Some complexity in configuration</li>
+<li>Background compaction overhead</li>
+<li>Better overall performance characteristics</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="future-directions">Future Directions<a href="#future-directions" class="hash-link" aria-label="Direct link to Future Directions" title="Direct link to Future Directions">​</a></h2>
+<p>Areas being considered for future development:</p>
+<ol>
+<li>
+<p><strong>Query Parser Enhancements</strong></p>
+<ul>
+<li>Support for parentheses in queries</li>
+<li>Advanced query syntax</li>
+<li>Prefix and wildcard queries</li>
+</ul>
+</li>
+<li>
+<p><strong>Distributed Architecture</strong></p>
+<ul>
+<li>Shard management</li>
+<li>Query federation</li>
+<li>Consensus algorithms</li>
+</ul>
+</li>
+<li>
+<p><strong>Real-time Index Updates</strong></p>
+<ul>
+<li>Incremental indexing improvements</li>
+<li>Near-real-time search visibility</li>
+<li>Transactional guarantees</li>
+</ul>
+</li>
+<li>
+<p><strong>Additional Ranking Models</strong></p>
+<ul>
+<li>Neural ranking models</li>
+<li>More LTR features</li>
+<li>Domain-specific algorithms</li>
+</ul>
+</li>
+<li>
+<p><strong>Enhanced Text Analysis</strong></p>
+<ul>
+<li>Improved tokenization</li>
+<li>Stemming and lemmatization</li>
+<li>Multilingual support</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="conclusion">Conclusion<a href="#conclusion" class="hash-link" aria-label="Direct link to Conclusion" title="Direct link to Conclusion">​</a></h2>
+<p>Fast Inverted Index is designed to be a high-performance, memory-efficient search engine library with clean separation of concerns and extensible architecture. Its design emphasizes practicality, offering a good balance between performance, feature richness, and usability.</p>
+<p>By separating index functionality from document storage and providing comprehensive Python bindings, the library serves as an excellent foundation for building search applications with modern requirements.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="references">References<a href="#references" class="hash-link" aria-label="Direct link to References" title="Direct link to References">​</a></h2>
+<ol>
+<li>Zobel, J., &amp; Moffat, A. (2006). Inverted files for text search engines. ACM computing surveys (CSUR), 38(2), 6.</li>
+<li>Büttcher, S., Clarke, C. L., &amp; Cormack, G. V. (2016). Information retrieval: Implementing and evaluating search engines. MIT Press.</li>
+<li>Pugh, W. (1990). Skip lists: a probabilistic alternative to balanced trees. Communications of the ACM, 33(6), 668-676.</li>
+<li>Robertson, S. E., &amp; Zaragoza, H. (2009). The probabilistic relevance framework: BM25 and beyond. Foundations and Trends in Information Retrieval, 3(4), 333-389.</li>
+<li>Lv, Y., &amp; Zhai, C. (2011). Lower-bounding term frequency normalization. In Proceedings of the 20th ACM international conference on Information and knowledge management (pp. 7-16).</li>
+</ol></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/username/fast-inverted-index/tree/main/docusaurus/docs/architecture_overview.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/docs/architecture"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">architecture</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/docs/hybrid-dictionary"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Hybrid Dictionary</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#introduction" class="table-of-contents__link toc-highlight">Introduction</a></li><li><a href="#system-architecture" class="table-of-contents__link toc-highlight">System Architecture</a><ul><li><a href="#high-level-components" class="table-of-contents__link toc-highlight">High-Level Components</a></li><li><a href="#core-components" class="table-of-contents__link toc-highlight">Core Components</a></li></ul></li><li><a href="#data-structures" class="table-of-contents__link toc-highlight">Data Structures</a><ul><li><a href="#hybrid-dictionary" class="table-of-contents__link toc-highlight">Hybrid Dictionary</a></li><li><a href="#skip-lists" class="table-of-contents__link toc-highlight">Skip Lists</a></li><li><a href="#compressed-storage" class="table-of-contents__link toc-highlight">Compressed Storage</a></li></ul></li><li><a href="#query-execution" class="table-of-contents__link toc-highlight">Query Execution</a><ul><li><a href="#query-processing-flow" class="table-of-contents__link toc-highlight">Query Processing Flow</a></li><li><a href="#boolean-operations" class="table-of-contents__link toc-highlight">Boolean Operations</a></li><li><a href="#scoring-algorithms" class="table-of-contents__link toc-highlight">Scoring Algorithms</a></li></ul></li><li><a href="#memory-management" class="table-of-contents__link toc-highlight">Memory Management</a><ul><li><a href="#memory-architecture" class="table-of-contents__link toc-highlight">Memory Architecture</a></li><li><a href="#memory-optimization-techniques" class="table-of-contents__link toc-highlight">Memory Optimization Techniques</a></li></ul></li><li><a href="#search-performance-characteristics" class="table-of-contents__link toc-highlight">Search Performance Characteristics</a><ul><li><a href="#performance-metrics" class="table-of-contents__link toc-highlight">Performance Metrics</a></li><li><a href="#performance-benchmarks" class="table-of-contents__link toc-highlight">Performance Benchmarks</a></li></ul></li><li><a href="#thread-safety-implementation" class="table-of-contents__link toc-highlight">Thread Safety Implementation</a><ul><li><a href="#thread-safe-components" class="table-of-contents__link toc-highlight">Thread-Safe Components</a></li><li><a href="#locking-strategy" class="table-of-contents__link toc-highlight">Locking Strategy</a></li></ul></li><li><a href="#document-storage-architecture" class="table-of-contents__link toc-highlight">Document Storage Architecture</a><ul><li><a href="#content-storage-patterns" class="table-of-contents__link toc-highlight">Content Storage Patterns</a></li><li><a href="#content-retrieval-flow" class="table-of-contents__link toc-highlight">Content Retrieval Flow</a></li></ul></li><li><a href="#field-specific-search" class="table-of-contents__link toc-highlight">Field-Specific Search</a><ul><li><a href="#schema-implementation" class="table-of-contents__link toc-highlight">Schema Implementation</a></li><li><a href="#multi-field-indexing" class="table-of-contents__link toc-highlight">Multi-Field Indexing</a></li></ul></li><li><a href="#python-bindings-architecture" class="table-of-contents__link toc-highlight">Python Bindings Architecture</a><ul><li><a href="#pyo3-integration" class="table-of-contents__link toc-highlight">PyO3 Integration</a></li><li><a href="#type-conversion-system" class="table-of-contents__link toc-highlight">Type Conversion System</a></li></ul></li><li><a href="#key-design-decisions-and-tradeoffs" class="table-of-contents__link toc-highlight">Key Design Decisions and Tradeoffs</a><ul><li><a href="#1-hybrid-dictionary-vs-pure-implementations" class="table-of-contents__link toc-highlight">1. Hybrid Dictionary vs. Pure Implementations</a></li><li><a href="#2-skip-lists-vs-other-posting-list-structures" class="table-of-contents__link toc-highlight">2. Skip Lists vs. Other Posting List Structures</a></li><li><a href="#3-field-specific-indexing-vs-global-index" class="table-of-contents__link toc-highlight">3. Field-Specific Indexing vs. Global Index</a></li><li><a href="#4-content-storage-separation" class="table-of-contents__link toc-highlight">4. Content Storage Separation</a></li><li><a href="#5-rocksdb-for-persistence" class="table-of-contents__link toc-highlight">5. RocksDB for Persistence</a></li></ul></li><li><a href="#future-directions" class="table-of-contents__link toc-highlight">Future Directions</a></li><li><a href="#conclusion" class="table-of-contents__link toc-highlight">Conclusion</a></li><li><a href="#references" class="table-of-contents__link toc-highlight">References</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/docs/">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/getting-started">Getting Started</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/api">API Reference</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/username/fast-inverted-index/discussions" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub Discussions<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://github.com/username/fast-inverted-index/issues" target="_blank" rel="noopener noreferrer" class="footer__link-item">Issues<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/username/fast-inverted-index" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 Fast Inverted Index. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

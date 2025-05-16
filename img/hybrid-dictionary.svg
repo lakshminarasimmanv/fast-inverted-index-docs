@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .title { font: bold 24px sans-serif; }
+    .subtitle { font: bold 18px sans-serif; }
+    .box-title { font: bold 16px sans-serif; }
+    .box-text { font: 14px sans-serif; }
+    .arrow { stroke: #666; stroke-width: 2; }
+    .arrow-head { fill: #666; }
+    .stat-text { font: 12px sans-serif; fill: #444; }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="#f8f9fa" />
+  
+  <!-- Title -->
+  <text x="400" y="40" class="title" text-anchor="middle">Hybrid Dictionary Architecture</text>
+  <text x="400" y="70" class="subtitle" text-anchor="middle">Adaptive Multi-Tier Term Storage</text>
+  
+  <!-- Term Frequency Distribution Curve -->
+  <path d="M 80 400 Q 180 150 580 380 T 720 400" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="5,5" />
+  <text x="160" y="150" class="stat-text" text-anchor="middle">High Frequency</text>
+  <text x="440" y="380" class="stat-text" text-anchor="middle">Medium Frequency</text>
+  <text x="680" y="400" class="stat-text" text-anchor="middle">Low Frequency</text>
+  
+  <!-- Hot Terms Box -->
+  <rect x="100" y="120" width="200" height="120" rx="10" fill="#ffecb3" stroke="#e6b800" stroke-width="2" />
+  <text x="200" y="145" class="box-title" text-anchor="middle">Hot Terms Layer</text>
+  <text x="200" y="170" class="box-text" text-anchor="middle">HashMap with interned strings</text>
+  <text x="200" y="195" class="box-text" text-anchor="middle">O(1) lookup time</text>
+  <text x="200" y="220" class="box-text" text-anchor="middle">~10-20% of vocabulary</text>
+  
+  <!-- Medium Terms Box -->
+  <rect x="300" y="220" width="200" height="120" rx="10" fill="#b3e0ff" stroke="#0099cc" stroke-width="2" />
+  <text x="400" y="245" class="box-title" text-anchor="middle">Medium Terms Layer</text>
+  <text x="400" y="270" class="box-text" text-anchor="middle">RadixTrie data structure</text>
+  <text x="400" y="295" class="box-text" text-anchor="middle">O(k) lookup time</text>
+  <text x="400" y="320" class="box-text" text-anchor="middle">~30-40% of vocabulary</text>
+  
+  <!-- Cold Terms Box -->
+  <rect x="500" y="320" width="200" height="120" rx="10" fill="#d9d9d9" stroke="#808080" stroke-width="2" />
+  <text x="600" y="345" class="box-title" text-anchor="middle">Cold Terms Layer</text>
+  <text x="600" y="370" class="box-text" text-anchor="middle">Simple HashMap</text>
+  <text x="600" y="395" class="box-text" text-anchor="middle">O(1) lookup time</text>
+  <text x="600" y="420" class="box-text" text-anchor="middle">~40-60% of vocabulary</text>
+  
+  <!-- String Interner Box -->
+  <rect x="580" y="120" width="160" height="100" rx="10" fill="#c8e6c9" stroke="#4caf50" stroke-width="2" />
+  <text x="660" y="145" class="box-title" text-anchor="middle">String Interner</text>
+  <text x="660" y="170" class="box-text" text-anchor="middle">Deduplicates strings</text>
+  <text x="660" y="195" class="box-text" text-anchor="middle">Memory optimization</text>
+  
+  <!-- Promotion/Demotion Arrows -->
+  <!-- Hot to Medium -->
+  <path d="M 240 240 L 320 270" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="270" y="245" class="stat-text" transform="rotate(-15, 270, 245)">Demotion</text>
+  
+  <!-- Medium to Hot -->
+  <path d="M 320 250 L 240 220" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="270" y="225" class="stat-text" transform="rotate(-15, 270, 225)">Promotion</text>
+  
+  <!-- Medium to Cold -->
+  <path d="M 440 340 L 520 370" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="470" y="345" class="stat-text" transform="rotate(-15, 470, 345)">Demotion</text>
+  
+  <!-- Cold to Medium -->
+  <path d="M 520 350 L 440 320" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="470" y="325" class="stat-text" transform="rotate(-15, 470, 325)">Promotion</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="arrow-head" />
+    </marker>
+  </defs>
+</svg>
